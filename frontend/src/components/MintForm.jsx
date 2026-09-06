@@ -5,7 +5,7 @@ import { uploadCardToIpfs } from "../utils/ipfs";
 const EMPTY_ATTR = { trait_type: "", value: "" };
 
 export default function MintForm({ wallet, bumpRefresh }) {
-  const { signer, account } = wallet;
+  const { signer, account, wrongNetwork } = wallet;
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -42,6 +42,10 @@ export default function MintForm({ wallet, bumpRefresh }) {
     e.preventDefault();
     if (!account) {
       setStatus({ type: "error", text: "Connect your wallet first." });
+      return;
+    }
+    if (wrongNetwork) {
+      setStatus({ type: "error", text: "Please switch to the correct network before minting." });
       return;
     }
     if (!imageFile || !name.trim()) {

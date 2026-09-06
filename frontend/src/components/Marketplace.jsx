@@ -3,18 +3,19 @@ import { getGameCardContract, getMarketplaceContract } from "../utils/contracts"
 import CardTile from "./CardTile";
 
 export default function Marketplace({ wallet, refreshKey, bumpRefresh }) {
-  const { provider, signer, account } = wallet;
+  const { provider, signer, account, wrongNetwork } = wallet;
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyTokenId, setBusyTokenId] = useState(null);
   const [message, setMessage] = useState(null);
 
   const load = useCallback(async () => {
-    if (!provider) return;
     setLoading(true);
+    setMessage(null);
     try {
-      const marketplace = getMarketplaceContract(provider);
-      const gameCard = getGameCardContract(provider);
+      const readProvider = (!wrongNetwork && provider) ? provider : undefined;
+      const marketplace = getMarketplaceContract(readProvider);
+      const gameCard = getGameCardContract(readProvider);
 
       const activeIds = await marketplace.getActiveListings();
 
@@ -44,7 +45,7 @@ export default function Marketplace({ wallet, refreshKey, bumpRefresh }) {
     } finally {
       setLoading(false);
     }
-  }, [provider]);
+  }, [provider, wrongNetwork]);
 
   useEffect(() => {
     load();
@@ -53,6 +54,10 @@ export default function Marketplace({ wallet, refreshKey, bumpRefresh }) {
   async function handleBuy(item) {
     if (!signer) {
       setMessage("Connect your wallet first.");
+      return;
+    }
+    if (wrongNetwork) {
+      setMessage("Please switch to the correct network before buying.");
       return;
     }
     setMessage(null);

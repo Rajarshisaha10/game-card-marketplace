@@ -4,7 +4,7 @@ import { getGameCardContract, getMarketplaceContract, MARKETPLACE_ADDRESS } from
 import CardTile from "./CardTile";
 
 export default function MyCards({ wallet, refreshKey, bumpRefresh }) {
-  const { provider, signer, account } = wallet;
+  const { provider, signer, account, wrongNetwork } = wallet;
   const [cards, setCards] = useState([]);
   const [listingPrices, setListingPrices] = useState({});
   const [loading, setLoading] = useState(true);
@@ -13,15 +13,17 @@ export default function MyCards({ wallet, refreshKey, bumpRefresh }) {
   const [activeListingIds, setActiveListingIds] = useState(new Set());
 
   const load = useCallback(async () => {
-    if (!provider || !account) {
+    if (!account) {
       setCards([]);
       setLoading(false);
       return;
     }
     setLoading(true);
+    setMessage(null);
     try {
-      const gameCard = getGameCardContract(provider);
-      const marketplace = getMarketplaceContract(provider);
+      const readProvider = (!wrongNetwork && provider) ? provider : undefined;
+      const gameCard = getGameCardContract(readProvider);
+      const marketplace = getMarketplaceContract(readProvider);
 
       const [ownedIds, activeListings] = await Promise.all([
         gameCard.getCardsOwnedBy(account),
@@ -44,13 +46,17 @@ export default function MyCards({ wallet, refreshKey, bumpRefresh }) {
     } finally {
       setLoading(false);
     }
-  }, [provider, account]);
+  }, [provider, account, wrongNetwork]);
 
   useEffect(() => {
     load();
   }, [load, refreshKey]);
 
   async function handleList(item) {
+    if (wrongNetwork) {
+      setMessage("Please switch to the correct network before listing.");
+      return;
+    }
     const priceStr = listingPrices[item.tokenId];
     if (!priceStr || Number(priceStr) <= 0) {
       setMessage("Enter a valid price in ETH before listing.");

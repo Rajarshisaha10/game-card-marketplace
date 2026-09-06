@@ -19,12 +19,22 @@ export function ipfsToHttp(uri) {
   return uri;
 }
 
+export const RPC_URL =
+  import.meta.env.VITE_RPC_URL ||
+  (EXPECTED_CHAIN_ID === 11155111
+    ? "https://ethereum-sepolia-rpc.publicnode.com"
+    : "http://127.0.0.1:8545");
+
+export function getDefaultProvider() {
+  return new ethers.JsonRpcProvider(RPC_URL);
+}
+
 export function getGameCardContract(signerOrProvider) {
   if (!GAMECARD_ADDRESS) throw new Error("VITE_GAMECARD_ADDRESS is not set. Deploy contracts first.");
-  return new ethers.Contract(GAMECARD_ADDRESS, GameCardAbi, signerOrProvider);
+  return new ethers.Contract(GAMECARD_ADDRESS, GameCardAbi, signerOrProvider || getDefaultProvider());
 }
 
 export function getMarketplaceContract(signerOrProvider) {
   if (!MARKETPLACE_ADDRESS) throw new Error("VITE_MARKETPLACE_ADDRESS is not set. Deploy contracts first.");
-  return new ethers.Contract(MARKETPLACE_ADDRESS, MarketplaceAbi, signerOrProvider);
+  return new ethers.Contract(MARKETPLACE_ADDRESS, MarketplaceAbi, signerOrProvider || getDefaultProvider());
 }
