@@ -1,8 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "";
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x" + "1".repeat(64); // placeholder, never commit a real key
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
+const rawKey = process.env.PRIVATE_KEY?.trim();
+const PRIVATE_KEY = rawKey
+  ? (rawKey.startsWith("0x") ? rawKey : `0x${rawKey}`)
+  : "0x" + "1".repeat(64);
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 /** @type import('hardhat/config').HardhatUserConfig */

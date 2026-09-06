@@ -2,8 +2,8 @@
   "name": "riftrunners-marketplace",
   "version": "1.0.0",
   "description": "Decentralized marketplace for minting, listing and buying unique Rift Runners game cards (ERC-721 + IPFS) on an EVM testnet.",
-  "license": "MIT",
   "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "node": "hardhat node",
