@@ -2,8 +2,10 @@ import { ethers } from "ethers";
 import GameCardAbi from "../abis/GameCard.json";
 import MarketplaceAbi from "../abis/Marketplace.json";
 
-export const GAMECARD_ADDRESS = import.meta.env.VITE_GAMECARD_ADDRESS;
-export const MARKETPLACE_ADDRESS = import.meta.env.VITE_MARKETPLACE_ADDRESS;
+export const GAMECARD_ADDRESS =
+  import.meta.env.VITE_GAMECARD_ADDRESS || "0x09384cEebBd6a78AB822c6006035175C836af58A";
+export const MARKETPLACE_ADDRESS =
+  import.meta.env.VITE_MARKETPLACE_ADDRESS || "0xc5EE55e8Ab2e7c6fe98E4F2D440051E52dB94E0f";
 export const EXPECTED_CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID || 11155111);
 export const EXPECTED_CHAIN_NAME = import.meta.env.VITE_CHAIN_NAME || "Sepolia";
 export const IPFS_GATEWAY = import.meta.env.VITE_IPFS_GATEWAY || "https://nftstorage.link/ipfs/";
